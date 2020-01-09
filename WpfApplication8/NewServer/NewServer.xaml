@@ -41,9 +41,10 @@
         <GroupBox x:Name="groupBox2" Foreground="Black" Grid.Column="1" Header="操作区" Grid.Row="2" Grid.ColumnSpan="2">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50*"/>
-                    <ColumnDefinition Width="50*"/>
-                    <ColumnDefinition Width="100*"/>
+                    <ColumnDefinition Width="39*"/>
+                    <ColumnDefinition Width="15*"/>
+                    <ColumnDefinition Width="54*"/>
+                    <ColumnDefinition Width="54*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -51,37 +52,18 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Label x:Name="label2" Content="请选择产品：" HorizontalAlignment="Center" Height="40" Margin="0" VerticalAlignment="Center" Width="134" FontSize="23" Grid.Row="0" Grid.Column="0"/>
-                <ComboBox x:Name="comboBox10" HorizontalAlignment="Left" Margin="0" Width="367" Height="40" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" SelectionChanged="comboBox1_SelectionChanged"/>
+                <ComboBox x:Name="comboBox10" HorizontalAlignment="Left" Margin="0" Width="367" Height="40" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" SelectionChanged="comboBox1_SelectionChanged" FontSize="14"/>
                 <Label x:Name="label1" Content="待投影内容：" HorizontalAlignment="Center" Height="40" Margin="0" VerticalAlignment="Center" Width="134" FontSize="23" Grid.Row="1" Grid.Column="0"/>
-                <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="0" Width="367" Height="40" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
-                <Button x:Name="button" Content="开始投影" HorizontalAlignment="Center" Margin="0" Width="125" FontSize="28" Height="44" VerticalAlignment="Center" Click="button_Click" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
-                <Button x:Name="button1" Content="停止投影" HorizontalAlignment="Center" Margin="0" Width="125" FontSize="28" Height="44" VerticalAlignment="Center" Click="button1_Click" Grid.Row="2" Grid.Column="2"/>
+                <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="0" Width="367" Height="40" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" FontSize="14"/>
+                <Button x:Name="button" Content="开始投影" HorizontalAlignment="Center" Margin="0" Width="124" FontSize="28" Height="44" VerticalAlignment="Center" Click="button_Click" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
+                <Button x:Name="button2" Content="一键投影" Grid.Column="2" HorizontalAlignment="Center" Margin="0" Grid.Row="2" VerticalAlignment="Center" Width="124" Height="44" FontSize="28" Click="button2_Click"/>
+                <Button x:Name="button1" Content="停止投影" HorizontalAlignment="Center" Margin="0" Width="124" FontSize="28" Height="44" VerticalAlignment="Center" Click="button1_Click" Grid.Row="2" Grid.Column="3"/>
             </Grid>
         </GroupBox>
-        <TabControl x:Name="tabControl" Grid.Column="1" Grid.Row="1" FontSize="20">
-            <TabItem x:Name="Tab1" Header="多选模式">
-                <Grid Background="White">
-                    <GroupBox x:Name="groupBox1" BorderBrush="Black" Header="已选节点" FontSize="22" Margin="0">
-                        <ScrollViewer x:Name="scrollR">
-                            <Grid x:Name="gridRight" Width="586" Height="587"/>
-                        </ScrollViewer>
-                    </GroupBox>
-                </Grid>
-            </TabItem>
-            <TabItem x:Name="Tab2" Header="单选模式">
-                <Grid Background="White">
-                    <DataGrid x:Name="dataGrid" ItemsSource="{x:Static local:NewServer.Projects}" AutoGenerateColumns="False" Background="White" FontSize="22">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="编号" Binding="{Binding ID}" IsReadOnly="True" Width="100"/>
-                            <DataGridComboBoxColumn Header="投影内容" ItemsSource="{x:Static local:NewServer.Users}" DisplayMemberPath="Name"  SelectedValuePath="Name" TextBinding="{Binding Path=Name}" Width="300"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-
-                </Grid>
-            </TabItem>
-        </TabControl>
-        <!--<ScrollViewer BorderBrush="Brown" BorderThickness="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="10,21,10,10" Grid.Row="1">
-            <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Height="775" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="1252" ScrollViewer.HorizontalScrollBarVisibility="Visible"/>
-        </ScrollViewer>-->
+        <GroupBox x:Name="groupBox1" BorderBrush="Black" Header="已选节点" Grid.Column="1" Grid.Row="1" FontSize="22" Margin="0">
+            <ScrollViewer x:Name="scrollR">
+                <Grid x:Name="gridRight" Width="586" Height="587"/>
+            </ScrollViewer>
+        </GroupBox>
     </Grid>
 </Window>

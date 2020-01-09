@@ -85,9 +85,10 @@ namespace WpfApplication8.NewServer
         public NewServer()
         {
             InitializeComponent();
-            // 设置全屏
+            
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            WindowState = WindowState.Maximized;
+            // 设置全屏
+            //WindowState = WindowState.Maximized;
             // 窗口固定大小
             ResizeMode = ResizeMode.NoResize;
             Title = "产线投屏系统";
@@ -99,6 +100,7 @@ namespace WpfApplication8.NewServer
                 contectList.Add(E2["data"]["5df2fff7051d095a7e45f70e"].ToString(), E2["id"].ToString());
             }
             comboBox.IsEnabled = false;
+            button2.IsEnabled = false;
             //for(int i = 0; i < 20; i++)
             //{
             //    Projects.Add(new Project(i.ToString()+"-"+i.ToString(), "1-1.JPG"));
@@ -190,51 +192,31 @@ namespace WpfApplication8.NewServer
             inn.AddRange(sNumR.Keys);
             gridRight.Children.Clear();
             gridRight.Height = ShowHeighR;
-            if (Tab2.IsSelected)
+
+            if (comboBox.SelectionBoxItem.ToString() == "")
             {
-                var ne = dataGrid.ItemsSource;
-                foreach (Project p in ne)
-                {
-                    if (imageList.Keys.Contains(p.Name))
-                    {
-                        result = "{\"cmd\":61,\"name\":\"" + p.Name + "\",\"url\":\"" + baseUrl + imageList[p.Name] + "\"}";
-                    }
-                    else if (videoList.Keys.Contains(p.Name))
-                    {
-                        result = "{\"cmd\":63,\"name\":\"" + p.Name + "\",\"url\":\"" + baseUrl + videoList[p.Name] + "\"}";
-                    }
-                    string[] s = p.ID.Split('-');//用-进行分割
-                    int Num = Convert.ToInt32(s[0]) * 100 + Convert.ToInt32(s[1]);//转换
-                    sendSth(sessionList[ipList[Num]], result);
-                }
+                MessageBox.Show("请选择要投影的内容");
+                return;
             }
-            else
+
+            if (inn.Count == 0)
             {
-                if (comboBox.SelectionBoxItem.ToString() == "")
-                {
-                    MessageBox.Show("请选择要投影的内容");
-                    return;
-                }
+                MessageBox.Show("请选择要发送的客户端");
+                return;
+            }
+            string thi = comboBox.SelectionBoxItem.ToString();
+            if (imageList.Keys.Contains(thi))
+            {
+                result = "{\"cmd\":61,\"name\":\"" + thi + "\",\"url\":\"" + baseUrl + imageList[thi] + "\"}";
+            }
+            else if (videoList.Keys.Contains(thi))
+            {
+                result = "{\"cmd\":63,\"name\":\"" + thi + "\",\"url\":\"" + baseUrl + videoList[thi] + "\"}";
+            }
 
-                if (inn.Count == 0)
-                {
-                    MessageBox.Show("请选择要发送的客户端");
-                    return;
-                }
-                string thi = comboBox.SelectionBoxItem.ToString();
-                if (imageList.Keys.Contains(thi))
-                {
-                    result = "{\"cmd\":61,\"name\":\"" + thi + "\",\"url\":\"" + baseUrl + imageList[thi] + "\"}";
-                }
-                else if (videoList.Keys.Contains(thi))
-                {
-                    result = "{\"cmd\":63,\"name\":\"" + thi + "\",\"url\":\"" + baseUrl + videoList[thi] + "\"}";
-                }
-
-                foreach (int es in inn)
-                {
-                    sendSth(sessionList[ipList[es]], result);
-                }
+            foreach (int es in inn)
+            {
+                sendSth(sessionList[ipList[es]], result);
             }
             int i = 0;
             foreach (NewCheckBox n in NcbR)
@@ -246,7 +228,6 @@ namespace WpfApplication8.NewServer
             }
             NcbR.Clear();
             sNumR.Clear();
-            Projects.Clear();
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
@@ -308,6 +289,8 @@ namespace WpfApplication8.NewServer
             sessionList.Add(ipAddress_Connect, session);
         }
 
+        List<string> rList = new List<string>();
+        string l;
         public void appServer_NewRequestReceived(DTSession session, DTRequestInfo requestInfo)
         {
             //requestInfo.cmd 接收的数据头
@@ -329,6 +312,8 @@ namespace WpfApplication8.NewServer
                         }
                         AddressList.Add(ipAddress_Receive, node);
                         string[] s = node.Split('-');//用-进行分割
+                        l = s[0];
+                        rList.Add(s[1]);
                         int Num = Convert.ToInt32(s[0]) * 100 + Convert.ToInt32(s[1]);//转换
                         ipList.Add(Num, ipAddress_Receive);
                         AddCheckBoxLeft(node);
@@ -384,6 +369,9 @@ namespace WpfApplication8.NewServer
                 sessionList.Remove(ipAddress_Close);
                 if (AddressList.Keys.Contains(ipAddress_Close))
                 {
+                    string na = AddressList[ipAddress_Close];
+                    string[] sp = na.Split('-');
+                    rList.Remove(sp[1]);
                     RemoveCheckBox(AddressList[ipAddress_Close]);
                     AddressList.Remove(ipAddress_Close);
                 }
@@ -406,7 +394,6 @@ namespace WpfApplication8.NewServer
                 var ne = nc.textBlock.Text;
                 RemoveCheckBoxLeft(ss);
                 AddCheckBoxRight(ss, nc);
-                Projects.Add(new Project(ne, ""));
             }
             else if (str.Contains("False"))
             {
@@ -417,9 +404,12 @@ namespace WpfApplication8.NewServer
             }
         }
 
+        List<string> neirongList = new List<string>();
+
         private void comboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             comboBox.IsEnabled = true;
+            button2.IsEnabled = true;
             string id = comboBox10.SelectedItem.ToString();
             var eq = Lib.Http.GetList(contectList[id]);
             if (eq.code != 0)
@@ -436,19 +426,18 @@ namespace WpfApplication8.NewServer
                 comboBox.Items.Clear();
                 imageList.Clear();
                 videoList.Clear();
-                Users.Clear();
+                neirongList.Clear();
                 foreach (JObject E1 in t)
                 {
                     if (E1["type"].ToString().Contains("image"))
                     {
+                        neirongList.Add(E1["name"].ToString());
                         comboBox.Items.Add(E1["name"]);
-                        Users.Add(new User(E1["name"].ToString()));
                         imageList.Add(E1["name"].ToString(), E1["path"].ToString());
                     }
                     else if (E1["type"].ToString().Contains("video"))
                     {
                         comboBox.Items.Add(E1["name"]);
-                        Users.Add(new User(E1["name"].ToString()));
                         videoList.Add(E1["name"].ToString(), E1["path"].ToString());
                     }
                 }
@@ -649,7 +638,7 @@ namespace WpfApplication8.NewServer
         }
         #endregion
 
-        #region 临时
+        #region 临时1
         private void textBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key != System.Windows.Input.Key.Enter) return;
@@ -685,28 +674,106 @@ namespace WpfApplication8.NewServer
         }
         #endregion
 
-        public static List<Project> Projects = new List<Project>();
-        public static List<User> Users = new List<User>();
-    }
-
-    public class User
-    {
-        public string Name { get; set; }
-        public User(string name)
+        #region 临时2
+        public void timeTest()
         {
-            Name = name;
+            System.Timers.Timer timer = new System.Timers.Timer();
+            timer.Enabled = true;
+            timer.Interval = 600000;
+            timer.Start();
+            timer.Elapsed += new System.Timers.ElapsedEventHandler(getss);
+        }
+
+        private void getss(object source, System.Timers.ElapsedEventArgs e)
+        {
+            Console.WriteLine("");
+        }
+        #endregion
+
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            neirongList.Sort(new CustomComparer());
+            string result;
+            for(int i = 0; i < rList.Count; i++)
+            {
+                foreach(string s in neirongList)
+                {
+                    if(s.Contains("-" + rList[i]))
+                    {
+                        int Num = Convert.ToInt32(l) * 100 + Convert.ToInt32(rList[i]);
+                        result = "{\"cmd\":61,\"name\":\"" + s + "\",\"url\":\"" + baseUrl + imageList[s] + "\"}";
+                        sendSth(sessionList[ipList[Num]], result);
+                    }
+                }
+            }
+            int j = 0;
+            neirongList.Sort();
+            foreach(NewCheckBox n in gridLeft.Children)
+            {
+                n.grid.Background = IndianRed;
+                n.textBlock1.Content = neirongList[j];
+                j++;
+            }
         }
     }
 
-    public class Project
+    class CustomComparer : IComparer<object>
     {
-        public string ID { get; set; }
-        public string Name { get; set; }
-        public Project(string id, string name)
+        public int Compare(object x, object y)
         {
-            ID = id;
-            Name = name;
+            if (x == null || y == null)
+                throw new ArgumentException("参数不能为空");
+            string fileA = x as string;
+            string fileB = y as string;
+            char[] arr1 = fileA.ToCharArray();
+            char[] arr2 = fileB.ToCharArray();
+            int i = 0, j = 0;
+            while (i < arr1.Length && j < arr2.Length)
+            {
+                if (char.IsDigit(arr1[i]) && char.IsDigit(arr2[j]))
+                {
+                    string s1 = "", s2 = "";
+                    while (i < arr1.Length && char.IsDigit(arr1[i]))
+                    {
+                        s1 += arr1[i];
+                        i++;
+                    }
+                    while (j < arr2.Length && char.IsDigit(arr2[j]))
+                    {
+                        s2 += arr2[j];
+                        j++;
+                    }
+                    if (int.Parse(s1) > int.Parse(s2))
+                    {
+                        return 1;
+                    }
+                    if (int.Parse(s1) < int.Parse(s2))
+                    {
+                        return -1;
+                    }
+                }
+                else
+                {
+                    if (arr1[i] > arr2[j])
+                    {
+                        return 1;
+                    }
+                    if (arr1[i] < arr2[j])
+                    {
+                        return -1;
+                    }
+                    i++;
+                    j++;
+                }
+            }
+            if (arr1.Length == arr2.Length)
+            {
+                return 0;
+            }
+            else
+            {
+                return arr1.Length > arr2.Length ? 1 : -1;
+            }
         }
-
     }
 }
