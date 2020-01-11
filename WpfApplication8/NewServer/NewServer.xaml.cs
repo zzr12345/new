@@ -85,10 +85,10 @@ namespace WpfApplication8.NewServer
         public NewServer()
         {
             InitializeComponent();
-            
+
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             // 设置全屏
-            //WindowState = WindowState.Maximized;
+            WindowState = WindowState.Maximized;
             // 窗口固定大小
             ResizeMode = ResizeMode.NoResize;
             Title = "产线投屏系统";
@@ -230,27 +230,43 @@ namespace WpfApplication8.NewServer
             sNumR.Clear();
         }
 
+        int ui = 1;
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            gridRight.Children.Clear();
-            gridRight.Height = ShowHeighR;
-            string result = "{\"cmd\":64}";
-            List<int> inn = new List<int>();
-            inn.AddRange(sNumR.Keys);
-            int i = 0;
-            foreach (int es in inn)
+            string ss="";
+            if (ui == 1)
             {
-                sendSth(sessionList[ipList[es]], result);
+                ss = "3-8";
             }
-            foreach (NewCheckBox n in NcbR)
+            if (ui == 2)
             {
-                n.textBlock1.Content = "(空闲)";
-                n.grid.Background = PaleGreen;
-                AddCheckBoxLeftRes(inn[i], n);
-                i++;
+                ss = "8-2";
             }
-            NcbR.Clear();
-            sNumR.Clear();
+            if (ui == 3)
+            {
+                ss = "1-1";
+            }
+            AddCheckBoxLeft(ss);
+            ui++;
+            //gridRight.Children.Clear();
+            //gridRight.Height = ShowHeighR;
+            //string result = "{\"cmd\":64}";
+            //List<int> inn = new List<int>();
+            //inn.AddRange(sNumR.Keys);
+            //int i = 0;
+            //foreach (int es in inn)
+            //{
+            //    sendSth(sessionList[ipList[es]], result);
+            //}
+            //foreach (NewCheckBox n in NcbR)
+            //{
+            //    n.textBlock1.Content = "(空闲)";
+            //    n.grid.Background = PaleGreen;
+            //    AddCheckBoxLeftRes(inn[i], n);
+            //    i++;
+            //}
+            //NcbR.Clear();
+            //sNumR.Clear();
         }
         #endregion
 
@@ -405,11 +421,17 @@ namespace WpfApplication8.NewServer
         }
 
         List<string> neirongList = new List<string>();
+        List<string> vList = new List<string>();
 
         private void comboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             comboBox.IsEnabled = true;
             button2.IsEnabled = true;
+            comboBox.Items.Clear();
+            imageList.Clear();
+            videoList.Clear();
+            neirongList.Clear();
+            vList.Clear();
             string id = comboBox10.SelectedItem.ToString();
             var eq = Lib.Http.GetList(contectList[id]);
             if (eq.code != 0)
@@ -423,23 +445,28 @@ namespace WpfApplication8.NewServer
                 if (!(o is JArray)) continue;
                 if (!o.ToString().Contains("sizeStr")) continue;
                 JArray t = (JArray)o;
-                comboBox.Items.Clear();
-                imageList.Clear();
-                videoList.Clear();
-                neirongList.Clear();
                 foreach (JObject E1 in t)
                 {
                     if (E1["type"].ToString().Contains("image"))
                     {
                         neirongList.Add(E1["name"].ToString());
-                        comboBox.Items.Add(E1["name"]);
                         imageList.Add(E1["name"].ToString(), E1["path"].ToString());
                     }
                     else if (E1["type"].ToString().Contains("video"))
                     {
-                        comboBox.Items.Add(E1["name"]);
+                        vList.Add(E1["name"].ToString());
                         videoList.Add(E1["name"].ToString(), E1["path"].ToString());
                     }
+                }
+                neirongList.Sort(new CustomComparer());
+                vList.Sort(new CustomComparer());
+                foreach (string a in neirongList)
+                {
+                    comboBox.Items.Add(a);
+                }
+                foreach (string a in vList)
+                {
+                    comboBox.Items.Add(a);
                 }
             }
         }
@@ -498,6 +525,8 @@ namespace WpfApplication8.NewServer
             }
         }
 
+        Dictionary<string, NewCheckBox> gdsk = new Dictionary<string, NewCheckBox>();
+
         #region 控件操作
         public void AddCheckBoxLeft(string body)
         {
@@ -525,8 +554,8 @@ namespace WpfApplication8.NewServer
 
                 sNumL.Add(Num, n1);
                 sNumL = sNumL.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
-                //gridLeft.Children.Add(n1);
-                //TknL.Add(n1.Margin);
+                gdsk.Add(body, n1);
+                gdsk=gdsk.OrderBy(p => p.Key, new CustomComparer()).ToDictionary(p => p.Key, o => o.Value);
                 NcbL.Clear();
                 gridLeft.Children.Clear();
                 NcbL.AddRange(sNumL.Values);
@@ -692,13 +721,17 @@ namespace WpfApplication8.NewServer
 
         private void button2_Click(object sender, RoutedEventArgs e)
         {
-            neirongList.Sort(new CustomComparer());
-            string result;
-            for(int i = 0; i < rList.Count; i++)
+            if (gridRight.Children.Count != 0)
             {
-                foreach(string s in neirongList)
+                MessageBox.Show("请取消已选中的节点");
+                return;
+            }
+            string result;
+            for (int i = 0; i < rList.Count; i++)
+            {
+                foreach (string s in neirongList)
                 {
-                    if(s.Contains("-" + rList[i]))
+                    if (s.Contains("-" + rList[i]))
                     {
                         int Num = Convert.ToInt32(l) * 100 + Convert.ToInt32(rList[i]);
                         result = "{\"cmd\":61,\"name\":\"" + s + "\",\"url\":\"" + baseUrl + imageList[s] + "\"}";
@@ -707,12 +740,35 @@ namespace WpfApplication8.NewServer
                 }
             }
             int j = 0;
-            neirongList.Sort();
-            foreach(NewCheckBox n in gridLeft.Children)
+            foreach (NewCheckBox n in gridLeft.Children)
             {
                 n.grid.Background = IndianRed;
                 n.textBlock1.Content = neirongList[j];
                 j++;
+            }
+        }
+
+        private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            List<NewCheckBox> nl = new List<NewCheckBox>();
+            nl.AddRange(NcbL);
+            foreach (NewCheckBox n in nl)
+            {
+                int num = stNumL[n.checkBox.Name];
+                RemoveCheckBoxLeft(num);
+                AddCheckBoxRight(num, n);
+            }
+        }
+
+        private void button4_Click(object sender, RoutedEventArgs e)
+        {
+            List<NewCheckBox> nl = new List<NewCheckBox>();
+            nl.AddRange(NcbR);
+            foreach (NewCheckBox n in nl)
+            {
+                int num = stNumR[n.checkBox.Name];
+                RemoveCheckBoxRight(num);
+                AddCheckBoxLeftRes(num, n);
             }
         }
     }

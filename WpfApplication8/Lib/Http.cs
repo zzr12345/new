@@ -2,9 +2,11 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,17 +15,27 @@ namespace WpfApplication8.Lib
 {
     class Http
     {
+        //设置HTTP报头方法
+        public static void SetHeaderValue(WebHeaderCollection header, string name, string value)
+        {
+            var property = typeof(WebHeaderCollection).GetProperty("InnerCollection", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (property != null)
+            {
+                var collection = property.GetValue(header, null) as NameValueCollection;
+                collection[name] = value;
+            }
+        }
 
         public static Response<JObject> GetList(string id)
         {
-            var url = String.Format("http://59.110.48.109:10013/data/{0}/appId/5df2ff67fa2f6e4fe0acb5e7", id);
+            var url = String.Format("http://gateway.dream-maker.com/sheet/data/{0}/appId/5df2ff67fa2f6e4fe0acb5e7", id);
             var rspJson = post(url, null);
             return dealResponse<JObject>(rspJson);
         }
 
         public static Response<JArray> GetchnList()
         {
-            var url = String.Format("http://59.110.48.109:10013/getViewData/0/5df2ff89390c1c6d44ba6b5f/all?page=1&size=20");
+            var url = String.Format("http://gateway.dream-maker.com/sheet/getViewData/0/5df2ff89390c1c6d44ba6b5f/all?page=1&size=20");
             var rspJson = post(url, null);
             return dealResponse<JArray>(rspJson);
         }
@@ -44,6 +56,7 @@ namespace WpfApplication8.Lib
             request.Method = "POST";//请求方法，通常是Get或者Post
             request.ContentType = "application/json";//请求体格式
             request.ContentLength = data.Length;//请求体长度
+            SetHeaderValue(request.Headers, "Authorization", "Basic ZGF0YTpkYXRh");
 
             Stream sm = request.GetRequestStream();
             sm.Write(data, 0, data.Length);

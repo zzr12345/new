@@ -41,23 +41,26 @@
         <GroupBox x:Name="groupBox2" Foreground="Black" Grid.Column="1" Header="操作区" Grid.Row="2" Grid.ColumnSpan="2">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="39*"/>
-                    <ColumnDefinition Width="15*"/>
-                    <ColumnDefinition Width="54*"/>
-                    <ColumnDefinition Width="54*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Label x:Name="label2" Content="请选择产品：" HorizontalAlignment="Center" Height="40" Margin="0" VerticalAlignment="Center" Width="134" FontSize="23" Grid.Row="0" Grid.Column="0"/>
-                <ComboBox x:Name="comboBox10" HorizontalAlignment="Left" Margin="0" Width="367" Height="40" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" SelectionChanged="comboBox1_SelectionChanged" FontSize="14"/>
-                <Label x:Name="label1" Content="待投影内容：" HorizontalAlignment="Center" Height="40" Margin="0" VerticalAlignment="Center" Width="134" FontSize="23" Grid.Row="1" Grid.Column="0"/>
-                <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="0" Width="367" Height="40" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" FontSize="14"/>
-                <Button x:Name="button" Content="开始投影" HorizontalAlignment="Center" Margin="0" Width="124" FontSize="28" Height="44" VerticalAlignment="Center" Click="button_Click" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
-                <Button x:Name="button2" Content="一键投影" Grid.Column="2" HorizontalAlignment="Center" Margin="0" Grid.Row="2" VerticalAlignment="Center" Width="124" Height="44" FontSize="28" Click="button2_Click"/>
-                <Button x:Name="button1" Content="停止投影" HorizontalAlignment="Center" Margin="0" Width="124" FontSize="28" Height="44" VerticalAlignment="Center" Click="button1_Click" Grid.Row="2" Grid.Column="3"/>
+                <Label x:Name="label2" Content="请选择产品：" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" FontSize="19" Grid.Row="0" Grid.Column="0"/>
+                <ComboBox x:Name="comboBox10" HorizontalAlignment="Left" Margin="0" Width="367" Height="40" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" SelectionChanged="comboBox1_SelectionChanged" FontSize="14"/>
+                <Label x:Name="label1" Content="待投影内容：" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" FontSize="19" Grid.Row="1" Grid.Column="0"/>
+                <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="0" Width="367" Height="40" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" FontSize="14"/>
+                <Button x:Name="button3" Content="全部选中" HorizontalAlignment="Center" Margin="0" Grid.Row="2" VerticalAlignment="Center" FontSize="28" Click="button3_Click"/>
+                <Button x:Name="button4" Content="全部取消" Grid.Column="1" HorizontalAlignment="Center" Margin="0" Grid.Row="2" VerticalAlignment="Center" FontSize="28" Click="button4_Click"/>
+                <Button x:Name="button" Content="开始投影" HorizontalAlignment="Center" Margin="0" FontSize="28" VerticalAlignment="Center" Click="button_Click" Grid.Row="2" Grid.Column="2"/>
+                <Button x:Name="button2" Content="一键投影" Grid.Column="3" HorizontalAlignment="Center" Margin="0" Grid.Row="2" VerticalAlignment="Center" FontSize="28" Click="button2_Click"/>
+                <Button x:Name="button1" Content="停止投影" HorizontalAlignment="Center" Margin="0" FontSize="28" VerticalAlignment="Center" Click="button1_Click" Grid.Row="2" Grid.Column="4"/>
             </Grid>
         </GroupBox>
         <GroupBox x:Name="groupBox1" BorderBrush="Black" Header="已选节点" Grid.Column="1" Grid.Row="1" FontSize="22" Margin="0">

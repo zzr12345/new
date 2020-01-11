@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:WpfApplication8"
              mc:Ignorable="d" 
              d:DesignHeight="90" d:DesignWidth="110">
-    <Grid x:Name="grid" Background="PapayaWhip" MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
+    <Grid x:Name="grid" Background="PapayaWhip">
         <Grid.RowDefinitions>
             <RowDefinition Height="14*"/>
             <RowDefinition Height="11*"/>
