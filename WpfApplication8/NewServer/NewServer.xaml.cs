@@ -88,7 +88,7 @@ namespace WpfApplication8.NewServer
 
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             // 设置全屏
-            WindowState = WindowState.Maximized;
+            //WindowState = WindowState.Maximized;
             // 窗口固定大小
             ResizeMode = ResizeMode.NoResize;
             Title = "产线投屏系统";
@@ -233,40 +233,25 @@ namespace WpfApplication8.NewServer
         int ui = 1;
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            string ss="";
-            if (ui == 1)
+            gridRight.Children.Clear();
+            gridRight.Height = ShowHeighR;
+            string result = "{\"cmd\":64}";
+            List<int> inn = new List<int>();
+            inn.AddRange(sNumR.Keys);
+            int i = 0;
+            foreach (int es in inn)
             {
-                ss = "3-8";
+                sendSth(sessionList[ipList[es]], result);
             }
-            if (ui == 2)
+            foreach (NewCheckBox n in NcbR)
             {
-                ss = "8-2";
+                n.textBlock1.Content = "(空闲)";
+                n.grid.Background = PaleGreen;
+                AddCheckBoxLeftRes(inn[i], n);
+                i++;
             }
-            if (ui == 3)
-            {
-                ss = "1-1";
-            }
-            AddCheckBoxLeft(ss);
-            ui++;
-            //gridRight.Children.Clear();
-            //gridRight.Height = ShowHeighR;
-            //string result = "{\"cmd\":64}";
-            //List<int> inn = new List<int>();
-            //inn.AddRange(sNumR.Keys);
-            //int i = 0;
-            //foreach (int es in inn)
-            //{
-            //    sendSth(sessionList[ipList[es]], result);
-            //}
-            //foreach (NewCheckBox n in NcbR)
-            //{
-            //    n.textBlock1.Content = "(空闲)";
-            //    n.grid.Background = PaleGreen;
-            //    AddCheckBoxLeftRes(inn[i], n);
-            //    i++;
-            //}
-            //NcbR.Clear();
-            //sNumR.Clear();
+            NcbR.Clear();
+            sNumR.Clear();
         }
         #endregion
 
@@ -555,7 +540,7 @@ namespace WpfApplication8.NewServer
                 sNumL.Add(Num, n1);
                 sNumL = sNumL.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
                 gdsk.Add(body, n1);
-                gdsk=gdsk.OrderBy(p => p.Key, new CustomComparer()).ToDictionary(p => p.Key, o => o.Value);
+                gdsk = gdsk.OrderBy(p => p.Key, new CustomComparer()).ToDictionary(p => p.Key, o => o.Value);
                 NcbL.Clear();
                 gridLeft.Children.Clear();
                 NcbL.AddRange(sNumL.Values);
@@ -731,20 +716,17 @@ namespace WpfApplication8.NewServer
             {
                 foreach (string s in neirongList)
                 {
-                    if (s.Contains("-" + rList[i]))
+                    string na = s[0] + "-" + rList[i];
+                    if (s.Substring(0, na.Count()) == na)
                     {
                         int Num = Convert.ToInt32(l) * 100 + Convert.ToInt32(rList[i]);
                         result = "{\"cmd\":61,\"name\":\"" + s + "\",\"url\":\"" + baseUrl + imageList[s] + "\"}";
                         sendSth(sessionList[ipList[Num]], result);
+                        sNumL[Num].grid.Background = IndianRed;
+                        sNumL[Num].textBlock1.Content = s;
+                        break;
                     }
                 }
-            }
-            int j = 0;
-            foreach (NewCheckBox n in gridLeft.Children)
-            {
-                n.grid.Background = IndianRed;
-                n.textBlock1.Content = neirongList[j];
-                j++;
             }
         }
 
